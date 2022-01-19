@@ -1,0 +1,16 @@
+{
+    "name": "phalcon/practice",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "practice\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jun",
+            "email": "wangjun@heymenology.com"
+        }
+    ],
+    "require": {}
+}
