@@ -3,7 +3,8 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "practice\\": "app/"
+            "practice\\": "app/",
+            "bootstrap\\": "bootstrap/"
         }
     },
     "authors": [

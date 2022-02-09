@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace demo\Providers;
+namespace practice\Providers;
 
 use Phalcon\Di\DiInterface;
 use Phalcon\Di\ServiceProviderInterface;
@@ -13,10 +13,13 @@ class ViewProvider implements ServiceProviderInterface
 
     public function register(DiInterface $di) : void
     {
-        $viewDir = $di->offsetGet('rootPath') . '/resources/views';
+        $viewDir = $di->offsetGet('app_path') . '/resources/views';
         $di->setShared($this->providerName, function() use ($viewDir) {
             $view = new View();
             $view->setViewsDir($viewDir);
+            $view->registerEngines([
+                ".volt" => View\Engine\Volt::class
+            ]);
             return $view;
         });
     }
