@@ -19,6 +19,9 @@
             <div class="row justify-content-center mt-1">
                 <div class="col-5 text-center"><button type="submit" name="sub" class="btn btn-primary mb-3">登录</button></div>
             </div>
+            <div class="row justify-content-center mt-2">
+                <?= $this->flashSession->output() ?>
+            </div>
         </form>
     </div>
 </body>

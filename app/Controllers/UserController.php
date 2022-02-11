@@ -8,16 +8,11 @@ use Phalcon\Security\JWT\Token\Parser;
 use Phalcon\Security\JWT\Validator;
 use practice\Models\Users;
 use practice\Validations\RegisterValidation;
-use Phalcon\Flash\Session;
 
 class UserController extends BaseController
 {
     public function indexAction()
     {
-        $headers = $this->assets->collection("headers");
-        $headers->addCss('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js', false);
         $this->cookies->useEncryption(false);
         if ($this->cookies->has('login')) {
             $phone = $this->cookies->get("login");
@@ -26,16 +21,13 @@ class UserController extends BaseController
             $this->view->setVar('user', $user);
         }
         else {
-            echo "error";
+            $this->flashSession->error('no login');
+            $this->response->redirect('User/loginPage');
         }
     }
 
     public function loginPageAction()
     {
-        $headers = $this->assets->collection("headers");
-        $headers->addCss('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js', false);
         $this->view->pick("Index/login");
     }
 
@@ -50,57 +42,30 @@ class UserController extends BaseController
         ]);
 
         if ($user) {
-            // Defaults to 'sha512'
-            $signer  = new Hmac();
-
-// Builder object
-            $builder = new Builder($signer);
-
-            $now        = new \DateTimeImmutable();
-            $issued     = $now->getTimestamp();
-            $notBefore  = $now->modify('-1 minute')->getTimestamp();
-            $expires    = $now->modify('+1 day')->getTimestamp();
-            $passphrase = 'QcMpZ&b&mo3TPsPk668J6QH8JA$&U&m2';
-
-// Setup
-            $builder
-                ->setAudience('https://target.phalcon.io')  // aud
-                ->setContentType('application/json')        // cty - header
-                ->setExpirationTime($expires)               // exp
-                ->setId('abcd123456789')                    // JTI id
-                ->setIssuedAt($issued)                      // iat
-                ->setIssuer('https://phalcon.io')           // iss
-                ->setNotBefore($notBefore)                  // nbf
-                ->setSubject('my subject for this claim')   // sub
-                ->setPassphrase($passphrase)                // password
-            ;
-
-// Phalcon\Security\JWT\Token\Token object
-            $tokenObject = $builder->getToken();
-
-            echo $tokenObject->getToken();
-            $this->response->setJsonContent(['code' => 200, 'message' => 'login success', 'content' => $tokenObject->getToken()])->send();
-
-            /*$check = $this->security->checkHash($password, $user->password);
+            $check = $this->security->checkHash($password, $user->password);
             if ($check === true) {
                 $this->cookies->useEncryption(false);
                 $this->cookies->set('login', $user->phone, time()+86400);
-                $this->response->setJsonContent(['code' => 200, 'message' => 'login success'])->send();
+                return $this->response->redirect('User/index');
+                //$this->response->setJsonContent(['code' => 200, 'message' => 'login success'])->send();
             }
             else {
-                var_dump('b');
-                $this->response->setJsonContent(['code' => 400, 'message' => 'login fail'])->send();
-            }*/
+                $this->flashSession->error("Incorrect username and/or password");
+                return $this->response->redirect('User/index');
+            }
         }
         else {
-            var_dump('c');
-            $this->response->setJsonContent(['code' => 401, 'message' => 'login fail'])->send();
+            $this->flashSession->error("Incorrect username and/or password");
+            return $this->response->redirect('User/index');
         }
-        die();
     }
 
     public function testAction()
     {
+        if (!$this->request->has('token')) {
+            echo $this->testJWT(); die();
+        }
+
         $tokenReceived = $this->request->get('token');
         $audience      = 'https://target.phalcon.io';
         $now           = new \DateTimeImmutable();
@@ -132,6 +97,39 @@ class UserController extends BaseController
         }
         var_dump($a);
         echo "</pre>";
+    }
+
+    private function testJWT()
+    {
+        // Defaults to 'sha512'
+        $signer  = new Hmac();
+
+        // Builder object
+        $builder = new Builder($signer);
+
+        $now        = new \DateTimeImmutable();
+        $issued     = $now->getTimestamp();
+        $notBefore  = $now->modify('-1 minute')->getTimestamp();
+        $expires    = $now->modify('+1 day')->getTimestamp();
+        $passphrase = 'QcMpZ&b&mo3TPsPk668J6QH8JA$&U&m2';
+
+        // Setup
+        $builder
+            ->setAudience('https://target.phalcon.io')  // aud
+            ->setContentType('application/json')        // cty - header
+            ->setExpirationTime($expires)               // exp
+            ->setId('abcd123456789')                    // JTI id
+            ->setIssuedAt($issued)                      // iat
+            ->setIssuer('https://phalcon.io')           // iss
+            ->setNotBefore($notBefore)                  // nbf
+            ->setSubject('my subject for this claim')   // sub
+            ->setPassphrase($passphrase)                // password
+        ;
+
+        // Phalcon\Security\JWT\Token\Token object
+        $tokenObject = $builder->getToken();
+
+        return $tokenObject->getToken();
     }
 
     public function storeAction()
@@ -173,10 +171,6 @@ class UserController extends BaseController
 
     public function editAction(int $id)
     {
-        $headers = $this->assets->collection("headers");
-        $headers->addCss('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js', false);
         $user = Users::findFirst($id);
         $this->view->setVar("user", $user);
         $this->view->pick('User/edit');
@@ -184,11 +178,6 @@ class UserController extends BaseController
 
     public function registerPageAction()
     {
-        $headers = $this->assets->collection("headers");
-        $headers->addCss('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js', false);
-        $headers->addJs('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js', false);
-        $this->flashSession->error('test');
         $this->view->pick('User/register');
     }
 
@@ -228,6 +217,20 @@ class UserController extends BaseController
     public function updateAction()
     {
 
+    }
+
+    public function logoutAction()
+    {
+        if ($this->cookies->has('login')) {
+            $cookies = $this->cookies->get('login');
+            $cookies->delete();
+            $this->flashSession->notice('log out success');
+        }
+        else {
+            $this->flashSession->notice('log out error');
+        }
+
+        $this->response->redirect('User/loginPage');
     }
 
 }

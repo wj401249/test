@@ -22,9 +22,10 @@
                             </el-menu>
                         </el-col>
                         <el-col :span=4>
-                            <el-button :icon="Search" circle @click="dialogFormVisible = true"></el-button>
-                            {% if user %}
-                            {{ user.phone }}
+                            {% if user is defined %}
+                            <el-button :icon="Search" @click="dialogFormVisible = true">{{ user.phone }}</el-button>
+                            {% else %}
+                            <el-button :icon="Search" @click="dialogFormVisible = true">注册</el-button>
                             {% endif %}
                         </el-col>
                     </el-row>

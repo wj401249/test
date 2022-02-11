@@ -16,6 +16,12 @@ class Bootstrap
             return $app_path;
         });
         $this->di->getShared('dispatcher')->setDefaultNamespace("practice\Controllers");
+
+        $headers = $this->di->getShared('assets')->collection("headers");
+
+        $headers->addCss('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css', false);
+        $headers->addJs('https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js', false);
+        $headers->addJs('https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js', false);
     }
 
     public function run() : Application

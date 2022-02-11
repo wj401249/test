@@ -22,6 +22,7 @@ class FlashSession implements ServiceProviderInterface
             );
             $session->setAdapter($files);
 
+            $session->start();
             $escaper = new Escaper();
             $flash = new flash($escaper, $session);
             return $flash;
