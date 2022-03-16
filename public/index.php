@@ -10,6 +10,7 @@ try {
     $bootstrap = new Bootstrap(APP_PATH);
 
     $app = $bootstrap->run();
+    
 
     $app->handle($_SERVER['REQUEST_URI'])->send();
 }catch (Exception $e) {
