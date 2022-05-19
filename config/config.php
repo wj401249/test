@@ -8,4 +8,5 @@ return [
         'dbname' => 'practice',
         'charset' => 'utf8mb4'
     ],
+    'test' => []
 ];
