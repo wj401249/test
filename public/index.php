@@ -14,4 +14,5 @@ try {
     $app->handle($_SERVER['REQUEST_URI'])->send();
 }catch (Exception $e) {
     echo $e->getMessage();
+    echo "test";
 }
