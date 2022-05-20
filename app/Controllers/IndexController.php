@@ -27,7 +27,6 @@ class IndexController extends BaseController
 
     public function testAction()
     {
-        $a = '';
         $this->view->pick('Index/index');
     }
 }
