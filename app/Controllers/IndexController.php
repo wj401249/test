@@ -23,7 +23,7 @@ class IndexController extends BaseController
             $user = Users::findFirst("phone = {$phone}");
             $this->view->setVar('user', $user);
         }
-        $a = 'a';
+        $a = 'b';
     }
 
     public function testAction()
