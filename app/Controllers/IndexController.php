@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace practice\Controllers;
 
 use practice\Models\Users;
+use Exception;
 
 class IndexController extends BaseController
 {
@@ -16,6 +17,9 @@ class IndexController extends BaseController
         $headerCollection->addJs("js/index.js");
         $headerCollection->addJs("https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js", false);
 
+        $headerCollection->addJs("js/index.js");
+        $headerCollection->addJs("https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js", false);
+
         $this->cookies->useEncryption(false);
         if ($this->cookies->has('login')) {
             $phone = $this->cookies->get("login");
@@ -23,6 +27,7 @@ class IndexController extends BaseController
             $user = Users::findFirst("phone = {$phone}");
             $this->view->setVar('user', $user);
         }
+        $a = 'c';
     }
 
     public function testAction()
